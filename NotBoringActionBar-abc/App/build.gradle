@@ -1,0 +1,41 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        google()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.1'
+    }
+}
+apply plugin: 'android'
+
+repositories {
+    mavenCentral()
+    google()
+}
+
+android {
+    compileSdkVersion 20
+    buildToolsVersion '26.0.2'
+
+    defaultConfig {
+        flavorDimensions "default"
+        minSdkVersion 16
+        targetSdkVersion 20
+    }
+    buildTypes {
+        release {
+//            runProguard true
+//            proguardFile getDefaultProguardFile('proguard-android-optimize.txt')
+        }
+    }
+    productFlavors {
+        defaultFlavor {
+            proguardFile 'proguard-rules.txt'
+        }
+    }
+}
+
+dependencies {
+    compile 'com.android.support:support-v4:25.1.0'
+}
