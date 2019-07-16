@@ -1,0 +1,118 @@
+package com.gsoft.keyhandover;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.gsoft.keyhandover.buz.KeyInfoBuz;
+import com.gsoft.keyhandover.buz.SearchBuz;
+import com.gsoft.keyhandover.entity.KeyInfoEntity;
+import com.gsoft.keyhandover.entity.SearchInfoEntity;
+import com.gsoft.keyhandover.entity.StaffEntity;
+import com.gsoft.keyhandover.entity.TrackAsEntity;
+import com.gsoft.keyhandover.util.L;
+import com.gsoft.keyhandover.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by Administrator on 2018/1/12.
+ */
+
+public class SearchActivity extends Activity implements View.OnClickListener {
+    Spinner trackasSp;
+    TextView ddkLendNum, ddkReturnNum, aqdLendNum, aqdReturnNum;
+    Button searchBtn;
+    ArrayAdapter<String> adapter;
+    List<String> lists = new ArrayList<>();
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_search);
+
+        trackasSp = findViewById(R.id.track_as);
+        ddkLendNum = findViewById(R.id.jie_deng_num);
+        ddkReturnNum = findViewById(R.id.jie_an_num);
+        aqdLendNum = findViewById(R.id.gui_deng_num);
+        aqdReturnNum = findViewById(R.id.gui_an_num);
+        (searchBtn = findViewById(R.id.btn)).setOnClickListener(this);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, lists);
+        trackasSp.setAdapter(adapter);
+
+        getTrackAs();
+    }
+
+    @Override
+    public void onClick(View view) {
+        try {
+            if (view == searchBtn) {
+                if (!StringUtils.isEmpty(trackasSp.getSelectedItem().toString())) {
+                    submit(trackasSp.getSelectedItem().toString());
+                } else {
+                    Toast.makeText(this, "股道列为不能为空！", Toast.LENGTH_SHORT).show();
+                }
+            }
+        } catch (Exception e) {
+            return;
+        }
+    }
+
+
+    private void getTrackAs() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final TrackAsEntity trackAs = SearchBuz.getTrackAsByCard();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (null != trackAs && null != trackAs.getTrainInTrackList()) {
+                            for (TrackAsEntity.TrainInTrackListBean bean : trackAs.getTrainInTrackList()) {
+                                lists.add(bean.getTrackName() + "(" + bean.getTrackPla() + ")");
+                            }
+                            adapter.notifyDataSetChanged();
+                        } else
+                            Toast.makeText(SearchActivity.this, "获取股道列为失败！", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }).start();
+    }
+
+
+    void submit(final String tracka) {
+        ddkLendNum.setText("");
+        ddkReturnNum.setText("");
+        aqdLendNum.setText("");
+        aqdReturnNum.setText("");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final SearchBuz.SearchInfoResult result = SearchBuz.submit(tracka);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (null != result && result.code == 200) {
+                            SearchInfoEntity info = result.data;
+                            ddkLendNum.setText(info.getCardOutNumber() + "");
+                            ddkReturnNum.setText(info.getCardInNumber() + "");
+                            aqdLendNum.setText(info.getBeltOutNumber() + "");
+                            aqdReturnNum.setText(info.getBeltInNumber() + "");
+                        } else {
+                            L.i("sanmu", "请求失败！。。。。。。。。。");
+                        }
+                    }
+                });
+            }
+        }).start();
+    }
+}

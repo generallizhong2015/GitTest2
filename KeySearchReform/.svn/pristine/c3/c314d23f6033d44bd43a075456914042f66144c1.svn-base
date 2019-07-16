@@ -1,0 +1,204 @@
+package com.gsoft.keyhandover.buz;
+
+import com.gsoft.keyhandover.entity.AtitleEntity;
+import com.gsoft.keyhandover.entity.AtitleEntity1;
+import com.gsoft.keyhandover.entity.FileEntity;
+import com.gsoft.keyhandover.entity.ProjectEntity;
+import com.gsoft.keyhandover.entity.QtitleEntity;
+import com.gsoft.keyhandover.entity.SequenceOrState;
+import com.gsoft.keyhandover.entity.ServerResponse;
+import com.gsoft.keyhandover.entity.TrainEntity;
+import com.gsoft.keyhandover.util.HttpUtil;
+import com.gsoft.keyhandover.util.KeyValue;
+import com.gsoft.keyhandover.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by Administrator on 2018/2/1.
+ */
+
+public class RemouldBuz {
+
+    static List<KeyValue> bodyParams = new ArrayList<KeyValue>();
+
+
+    /*获取车组号列表*/
+    public static class TrainsResult extends ServerResponse {
+        public List<TrainEntity> data;
+    }
+
+    public static TrainsResult getTracks(String dateS) {
+        bodyParams.clear();
+        bodyParams.add(new KeyValue("endDate", dateS));
+
+        String para = StringUtils.getPara(bodyParams);
+        String url = "http://" + HttpUtil.baseIp + HttpUtil.dk + "/api/v1/listTrain";
+
+        TrainsResult response = null;
+        try {
+            response = HttpUtil.doHttpPost(url, para, TrainsResult.class);
+        } catch (Exception e) {
+
+        }
+        return response;
+    }
+
+
+    /*实施获取项点列表 */
+    public static class AtitlesResult extends ServerResponse {
+        public List<AtitleEntity1> data;
+    }
+
+    public static AtitlesResult getAtitles(String trainCode, String operationId, String trainOrder) {
+        bodyParams.clear();
+        bodyParams.add(new KeyValue("trainCode", trainCode));
+        bodyParams.add(new KeyValue("operationId", operationId));
+        bodyParams.add(new KeyValue("trainOrder", trainOrder));
+
+        String para = StringUtils.getPara(bodyParams);
+        String url = "http://" + HttpUtil.baseIp + HttpUtil.dk + "/api/v1/listProNode";
+
+        AtitlesResult response = null;
+        try {
+            response = HttpUtil.doHttpPost(url, para, AtitlesResult.class);
+        } catch (Exception e) {
+
+        }
+        return response;
+    }
+
+
+    /*质检获取项点列表 */
+    public static class QtitlesResult extends ServerResponse {
+        public List<QtitleEntity> data;
+    }
+
+    public static QtitlesResult getQtitles(String trainCode, String operationId, String trainOrder) {
+        bodyParams.clear();
+        bodyParams.add(new KeyValue("trainCode", trainCode));
+        bodyParams.add(new KeyValue("operationId", operationId));
+        bodyParams.add(new KeyValue("trainOrder", trainOrder));
+
+        String para = StringUtils.getPara(bodyParams);
+        String url = "http://" + HttpUtil.baseIp + HttpUtil.dk + "/api/v1/listProQcNode";
+
+        QtitlesResult response = null;
+        try {
+            response = HttpUtil.doHttpPost(url, para, QtitlesResult.class);
+        } catch (Exception e) {
+
+        }
+        return response;
+    }
+
+
+    /*获取文件列表*/
+    public static class FilesResult extends ServerResponse {
+        public List<FileEntity> data;
+    }
+
+    public static FilesResult getFiles(String id) {
+        bodyParams.clear();
+        bodyParams.add(new KeyValue("operationId", id));
+
+        String para = StringUtils.getPara(bodyParams);
+        String url = "http://" + HttpUtil.baseIp + HttpUtil.dk + "/api/v1/listProFile";
+
+        FilesResult response = null;
+        try {
+            response = HttpUtil.doHttpPost(url, para, FilesResult.class);
+        } catch (Exception e) {
+
+        }
+        return response;
+    }
+
+
+    /*回填提交*/
+    public static ServerResponse backFill(String nodeId, String remark, boolean qualified) {
+        bodyParams.clear();
+        bodyParams.add(new KeyValue("nodeId", nodeId));
+        bodyParams.add(new KeyValue("remark", remark));
+        bodyParams.add(new KeyValue("qualified", qualified));
+
+        String para = StringUtils.getPara(bodyParams);
+        String url = "http://" + HttpUtil.baseIp + HttpUtil.dk + "/api/v1/backFill";
+
+        ServerResponse response = null;
+        try {
+            response = HttpUtil.doHttpPost(url, para, ServerResponse.class);
+        } catch (Exception e) {
+
+        }
+        return response;
+    }
+
+
+    /*质检回填提交*/
+    public static ServerResponse backFillQ(String nodeId, String remark, boolean qualified) {
+        bodyParams.clear();
+        bodyParams.add(new KeyValue("qcNodeId", nodeId));
+        bodyParams.add(new KeyValue("remark", remark));
+        bodyParams.add(new KeyValue("qualified", qualified));
+
+        String para = StringUtils.getPara(bodyParams);
+        String url = "http://" + HttpUtil.baseIp + HttpUtil.dk + "/api/v1/qcBackFill";
+
+        ServerResponse response = null;
+        try {
+            response = HttpUtil.doHttpPost(url, para, ServerResponse.class);
+        } catch (Exception e) {
+
+        }
+        return response;
+    }
+
+
+    //获取项目名称
+    public static class ProjectResult extends ServerResponse {
+        public List<ProjectEntity> data;
+    }
+
+    public static ProjectResult getProject(String Trains) {
+        bodyParams.clear();
+        bodyParams.add(new KeyValue("trainCode", Trains));
+
+        String para = StringUtils.getPara(bodyParams);
+        String url = "http://" + HttpUtil.baseIp + HttpUtil.dk + "/api/v1/listPro";
+
+        ProjectResult projectResult = null;
+        try {
+            projectResult = HttpUtil.doHttpPost(url, para, ProjectResult.class);
+            // Log.e("lz",response+"");
+        } catch (Exception e) {
+
+        }
+        return projectResult;
+    }
+
+    //查询辆序及车组号
+    public static class SequenceOrStateResult extends ServerResponse {
+        public List<SequenceOrState> data;
+    }
+
+    public static SequenceOrStateResult getSequenceOrState(String operationId, String trainCode) {
+        bodyParams.clear();
+        bodyParams.add(new KeyValue("operationId", operationId));
+        bodyParams.add(new KeyValue("trainCode", trainCode));//车组号
+
+
+        String para = StringUtils.getPara(bodyParams);
+        String url = "http://" + HttpUtil.baseIp + HttpUtil.dk + "/api/v1/listProContent";
+
+        SequenceOrStateResult sequenceOrStateResult = null;
+        try {
+            sequenceOrStateResult = HttpUtil.doHttpPost(url, para, SequenceOrStateResult.class);
+        } catch (Exception e) {
+
+        }
+        return sequenceOrStateResult;
+    }
+
+}

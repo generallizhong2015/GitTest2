@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/blue_01">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="登顶卡/安全带查询"
+            android:textColor="@color/gray_01"
+            android:textSize="18sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="50dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="股道列位：" />
+
+
+        <Spinner
+            android:id="@+id/track_as"
+            android:layout_width="180dp"
+            android:layout_height="30dp"
+            android:background="@drawable/search_spinner"
+            android:gravity="center" />
+
+
+    </LinearLayout>
+
+
+    <RadioGroup
+        android:id="@+id/radioGroup1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/yiliewei_rbCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dip"
+            android:text="1列位" />
+
+        <RadioButton
+            android:id="@+id/erliewei_rbRepair"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dip"
+            android:layout_toRightOf="@id/yiliewei_rbCheck"
+            android:text="2列位" />
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dip"
+        android:background="@drawable/search_form"
+        android:orientation="horizontal"
+        android:weightSum="532">
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="131"
+            android:orientation="vertical"
+            android:weightSum="219">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="56"
+                android:background="@null"
+                android:gravity="center"
+                android:text="种类" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="80"
+                android:background="@null"
+                android:gravity="center"
+                android:text="安全带" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="80"
+                android:background="@null"
+                android:gravity="center"
+                android:text="登顶卡" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="216"
+            android:orientation="vertical"
+            android:weightSum="219">
+
+            <TextView
+                android:id="@+id/loan_txt"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="56"
+                android:background="@null"
+                android:gravity="center"
+
+                android:text="借出数量" />
+
+            <TextView
+                android:id="@+id/jie_deng_num"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="80"
+                android:background="@null"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/jie_an_num"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="80"
+                android:background="@null"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="182"
+            android:orientation="vertical"
+            android:weightSum="219">
+
+            <TextView
+                android:id="@+id/return_txt"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="56"
+                android:background="@null"
+                android:gravity="center"
+                android:text="归还数量" />
+
+            <TextView
+                android:id="@+id/gui_deng_num"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="80"
+                android:background="@null"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/gui_an_num"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="80"
+                android:background="@null"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn"
+        android:layout_width="120dip"
+        android:layout_height="50dip"
+        android:layout_marginTop="130dip"
+        android:background="@drawable/bottom_btn_bg"
+        android:text="查询"
+        android:textColor="@color/gray_01" />
+
+
+</LinearLayout>

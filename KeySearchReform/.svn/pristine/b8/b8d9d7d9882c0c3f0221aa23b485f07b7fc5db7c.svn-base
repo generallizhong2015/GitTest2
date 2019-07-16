@@ -1,0 +1,20 @@
+package com.gsoft.keyhandover.nodecontrolui;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+
+import com.gsoft.keyhandover.R;
+
+/**
+ * Created by Administrator on 2018/2/2.
+ */
+
+public class NodeControlActivity extends Activity {
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_nodecontrol);
+    }
+}

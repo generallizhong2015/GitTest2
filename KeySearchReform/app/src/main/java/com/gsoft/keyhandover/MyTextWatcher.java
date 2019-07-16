@@ -1,0 +1,39 @@
+package com.gsoft.keyhandover;
+
+import android.text.Editable;
+import android.text.TextWatcher;
+
+import com.gsoft.keyhandover.util.L;
+
+/**
+ * Created by lz on 2016/6/23 0023.
+ * 封装的textWatcher
+ */
+public abstract class MyTextWatcher implements TextWatcher {
+    public String beforeS;
+    public String afterS;
+
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        beforeS = s.toString();
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        afterS = s.toString();
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+        if (beforeS.equals(afterS)) return;
+        onChanged();
+    }
+
+    public abstract void onChanged();
+}

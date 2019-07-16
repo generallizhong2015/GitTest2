@@ -1,0 +1,228 @@
+package com.gsoft.keyhandover;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.gsoft.keyhandover.assist.FileUtil;
+import com.gsoft.keyhandover.buz.RemouldBuz;
+import com.gsoft.keyhandover.entity.FileEntity;
+import com.gsoft.keyhandover.util.HttpCallback;
+import com.gsoft.keyhandover.util.HttpUtil;
+import com.gsoft.keyhandover.util.L;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
+/**
+ * Created by Administrator on 2018/1/22.
+ */
+
+public class FileShowActivity extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
+
+    Context context;
+    ListView listv;
+    List<FileEntity> lists = new ArrayList<>();
+    MyAdapter adapter;
+    String operationId;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_fileshow);
+        this.context = this;
+        getIntentData();
+        listv = findViewById(R.id.listv);
+        adapter = new MyAdapter();
+        listv.setAdapter(adapter);
+        listv.setOnItemClickListener(this);
+        getDatas();
+    }
+
+
+    private void getIntentData() {
+        Intent intent = getIntent();
+        if (null != intent) {
+            operationId = intent.getStringExtra("operationId");
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onClick(View view) {
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        if (!new File(FileUtil.getSdPath(this) + "/" + lists.get(i).getFileName()).exists()) {
+            Toast.makeText(this, "请先下载文件！", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        FileUtil.openAnyFile(this, FileUtil.getSdPath(this) + "/" + lists.get(i).getFileName());
+    }
+
+    private class MyAdapter extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return lists.size();
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return lists.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            HodlerView hodler = null;
+            if (view == null) {
+                hodler = new HodlerView();
+                view = LayoutInflater.from(FileShowActivity.this).inflate(R.layout.item_fileshow, null);
+                hodler.img = view.findViewById(R.id.img);
+                hodler.des = view.findViewById(R.id.des);
+                hodler.name = view.findViewById(R.id.name);
+                hodler.fileName = view.findViewById(R.id.file_name);
+                view.setTag(hodler);
+            } else {
+                hodler = (HodlerView) view.getTag();
+            }
+            hodler.bean = lists.get(i);
+            itemUi(hodler);
+            return view;
+        }
+
+        public class HodlerView {
+            CircleImageView img;
+            TextView des;
+            TextView name;
+            TextView fileName;
+            FileEntity bean;
+
+        }
+    }
+
+
+    void itemUi(final MyAdapter.HodlerView hodler) {
+
+        if (FileUtil.getFileTypeFromUrl(hodler.bean.getFileName()) == FileUtil.FileEnum.IMG) {
+            hodler.img.setImageDrawable(getResources().getDrawable(R.drawable.ic_image_24dp));
+        } else if (FileUtil.getFileTypeFromUrl(hodler.bean.getFileName()) == FileUtil.FileEnum.VIDEO) {
+            hodler.img.setImageDrawable(getResources().getDrawable(R.drawable.ic_video_24dp));
+        } else if (FileUtil.getFileTypeFromUrl(hodler.bean.getFileName()) == FileUtil.FileEnum.WPS) {
+            hodler.img.setImageDrawable(getResources().getDrawable(R.drawable.ic_file_black_24dp));
+        } else {
+            hodler.img.setImageDrawable(getResources().getDrawable(R.drawable.ic_file_black_24dp));
+        }
+
+        hodler.des.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                downFile(hodler.bean, (TextView) view);
+            }
+        });
+        if (FileUtil.isFileExists(this, hodler.bean.getFileName())) {
+            hodler.des.setVisibility(View.GONE);
+            hodler.des.setClickable(false);
+        } else {
+            hodler.des.setText("下载");
+            hodler.des.setVisibility(View.VISIBLE);
+            hodler.des.setClickable(true);
+        }
+        hodler.fileName.setText(hodler.bean.getFileName());
+        hodler.name.setText(hodler.bean.getFileName());
+    }
+
+
+    private void getDatas() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final RemouldBuz.FilesResult result = RemouldBuz.getFiles(operationId);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (null != result && null != result.data) {
+                            lists.clear();
+                            lists.addAll(result.data);
+                            adapter.notifyDataSetChanged();
+                        } else
+                            Toast.makeText(FileShowActivity.this, "获取数据失败！", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }).start();
+    }
+
+
+    private void downFile(final FileEntity entity, final TextView view) {
+        final String url = "http://" + HttpUtil.GZbaseIp_ + HttpUtil.GZdk + "/api/v1/proFile/download";
+//        final String url = "http://" + "192.168.1.2:8888" + "/api/v1/proFile/download";
+        final HttpCallback callback = new HttpCallback() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onFail() {
+
+            }
+
+            @Override
+            public void onFinsh() {
+                L.i("lz", "onFinsh");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        view.setVisibility(View.GONE);
+                    }
+                });
+//                view.setText("");
+            }
+
+            @Override
+            public void onPorgress(final int porgress) {
+                L.i("lz", "porgress:" + porgress);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        view.setText(porgress + "%");
+                    }
+                });
+//                view.setText(porgress + "%");
+            }
+        };
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                L.i("lz", "id:" + entity.getId());
+                HttpUtil.downloadFile(url, FileUtil.getSdPath(context) + "/" + entity.getFileName(),
+                        "id=" + entity.getId(), callback);
+            }
+        }).start();
+
+    }
+}

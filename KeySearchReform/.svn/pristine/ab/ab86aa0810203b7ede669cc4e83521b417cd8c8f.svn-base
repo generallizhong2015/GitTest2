@@ -1,0 +1,79 @@
+package com.gsoft.keyhandover.buz;
+
+import com.gsoft.keyhandover.entity.KeyInfoEntity;
+import com.gsoft.keyhandover.entity.ServerResponse;
+import com.gsoft.keyhandover.entity.ServerResponse1;
+import com.gsoft.keyhandover.entity.StaffEntity;
+import com.gsoft.keyhandover.util.HttpUtil;
+import com.gsoft.keyhandover.util.KeyValue;
+import com.gsoft.keyhandover.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by Administrator on 2018/1/16.
+ */
+
+public class KeyInfoBuz {
+
+    static List<KeyValue> bodyParams = new ArrayList<KeyValue>();
+
+    public static class KeyInfoResult extends ServerResponse {
+        public KeyInfoEntity data;
+    }
+
+    public static KeyInfoBuz.KeyInfoResult getKeyInfo(String code) {
+
+        bodyParams.clear();
+        bodyParams.add(new KeyValue("code", code));
+
+        String para = StringUtils.getPara(bodyParams);
+        String url = "http://" + HttpUtil.baseIp + ":8086/getKeyInfo.action";
+        KeyInfoBuz.KeyInfoResult response = null;
+        try {
+            response = HttpUtil.doHttpPost(url, para, KeyInfoBuz.KeyInfoResult.class);
+        } catch (Exception e) {
+
+        }
+        return response;
+    }
+
+
+    public static StaffEntity getUserInfoByCard(String cardID) {
+        bodyParams.clear();
+        bodyParams.add(new KeyValue("cardID", cardID));
+        String para = StringUtils.getPara(bodyParams);
+        String url = "http://192.168.1.2/CheckListStaticWeb/Pages/GetStaffInfoByCard.ashx";
+        StaffEntity response = null;
+        try {
+            response = HttpUtil.doHttpPost(url, para, StaffEntity.class);
+        } catch (Exception e) {
+
+        }
+        return response;
+    }
+
+    public static class SubmitInfoResult extends ServerResponse {
+        public String data;
+    }
+
+
+    public static SubmitInfoResult submitInfo(String name, String keyId, String nameId) {
+        bodyParams.clear();
+        bodyParams.add(new KeyValue("name", name));
+        bodyParams.add(new KeyValue("keyId", keyId));
+        bodyParams.add(new KeyValue("nameId", nameId));
+        String para = StringUtils.getPara(bodyParams);
+        String url = "http://" + HttpUtil.baseIp + ":8086/joinKeyOk.action";
+        SubmitInfoResult response = null;
+        try {
+            response = HttpUtil.doHttpPost(url, para, SubmitInfoResult.class);
+        } catch (Exception e) {
+
+        }
+        return response;
+    }
+
+
+}

@@ -1,0 +1,115 @@
+package com.gsoft.keyhandover.entity;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+/**
+ * Created by Administrator on 2018/2/5.
+ */
+
+public class QtitleEntity implements Parcelable {
+
+
+    /**
+     * qcNodeId : 89E94F14FE6740F79B17F4B4A512CAF9
+     * nodeName : 打开冰箱
+     * status : 1
+     * qcCheck : 无
+     * order : 0
+     * performCondition : 冰箱
+     */
+
+    private String qcNodeId;
+    private String nodeName;
+    private int status;
+    private String qcCheck;
+    private int order;
+    private String performCondition;
+
+    public String getQcNodeId() {
+        return qcNodeId;
+    }
+
+    public void setQcNodeId(String qcNodeId) {
+        this.qcNodeId = qcNodeId;
+    }
+
+    public String getNodeName() {
+        return nodeName;
+    }
+
+    public void setNodeName(String nodeName) {
+        this.nodeName = nodeName;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getQcCheck() {
+        return qcCheck;
+    }
+
+    public void setQcCheck(String qcCheck) {
+        this.qcCheck = qcCheck;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    public String getPerformCondition() {
+        return performCondition;
+    }
+
+    public void setPerformCondition(String performCondition) {
+        this.performCondition = performCondition;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.qcNodeId);
+        dest.writeString(this.nodeName);
+        dest.writeInt(this.status);
+        dest.writeString(this.qcCheck);
+        dest.writeInt(this.order);
+        dest.writeString(this.performCondition);
+    }
+
+    public QtitleEntity() {
+    }
+
+    protected QtitleEntity(Parcel in) {
+        this.qcNodeId = in.readString();
+        this.nodeName = in.readString();
+        this.status = in.readInt();
+        this.qcCheck = in.readString();
+        this.order = in.readInt();
+        this.performCondition = in.readString();
+    }
+
+    public static final Parcelable.Creator<QtitleEntity> CREATOR = new Parcelable.Creator<QtitleEntity>() {
+        @Override
+        public QtitleEntity createFromParcel(Parcel source) {
+            return new QtitleEntity(source);
+        }
+
+        @Override
+        public QtitleEntity[] newArray(int size) {
+            return new QtitleEntity[size];
+        }
+    };
+}

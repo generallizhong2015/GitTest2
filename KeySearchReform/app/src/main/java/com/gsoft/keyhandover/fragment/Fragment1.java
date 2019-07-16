@@ -1,0 +1,150 @@
+package com.gsoft.keyhandover.fragment;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.gsoft.keyhandover.Loan_Activty;
+import com.gsoft.keyhandover.R;
+import com.gsoft.keyhandover.buz.SearchBuz;
+import com.gsoft.keyhandover.entity.SearchInfoEntity;
+import com.gsoft.keyhandover.entity.TrackAsEntity1;
+import com.gsoft.keyhandover.util.L;
+import com.gsoft.keyhandover.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Fragment1 extends Fragment implements View.OnClickListener {
+    private Spinner trackasSp;
+    private TextView ddkLendNum, ddkReturnNum, aqdLendNum, aqdReturnNum;
+    private Button searchBtn;
+    private ArrayAdapter<String> adapter;
+    private List<String> lists = new ArrayList<>();
+    private RadioButton myiliewei_rbCheck, erliewei_rbRepair;
+    private String LieWei;
+    public List<TrackAsEntity1> data;
+    private SearchBuz.SearchInfoResult result;
+    private TextView mloan_txt, mreturn_txt;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_search, null);
+        trackasSp = view.findViewById(R.id.track_as);
+        ddkLendNum = view.findViewById(R.id.jie_deng_num);
+        ddkReturnNum = view.findViewById(R.id.jie_an_num);
+        aqdLendNum = view.findViewById(R.id.gui_deng_num);
+        aqdReturnNum = view.findViewById(R.id.gui_an_num);
+        myiliewei_rbCheck = view.findViewById(R.id.yiliewei_rbCheck);
+        erliewei_rbRepair = view.findViewById(R.id.erliewei_rbRepair);
+
+        (mloan_txt = view.findViewById(R.id.loan_txt)).setOnClickListener(this);
+        (mreturn_txt = view.findViewById(R.id.return_txt)).setOnClickListener(this);
+        (searchBtn = view.findViewById(R.id.btn)).setOnClickListener(this);
+
+        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, lists);
+        trackasSp.setAdapter(adapter);
+        getTrackAs();
+        return view;
+    }
+
+    //获取股道信息
+    private void getTrackAs() {
+        if (lists.size() > 0) {
+        } else {
+            try {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final TrackAsEntity1 trackAs = SearchBuz.getTrackAsByCard();
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (null != trackAs) {
+                                    for (TrackAsEntity1.TrackInfoListBean bean : trackAs.getTrackInfoList()) {
+                                        lists.add(bean.getTrackName());
+                                    }
+                                    adapter.notifyDataSetChanged();
+                                } else
+                                    Toast.makeText(getActivity(), "获取股道列位失败！", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }).start();
+            } catch (Exception e) {
+                return;
+            }
+        }
+
+    }
+
+    //  请求安全带登顶卡信息
+    void submit(final String tracka) {
+        ddkLendNum.setText("");
+        ddkReturnNum.setText("");
+        aqdLendNum.setText("");
+        aqdReturnNum.setText("");
+        if (myiliewei_rbCheck.isChecked()) {
+            LieWei = "";
+            LieWei = "1";
+        } else if (erliewei_rbRepair.isChecked()) {
+            LieWei = "";
+            LieWei = "2";
+        } else {
+            Toast.makeText(getActivity(), "列位还未选择", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                result = SearchBuz.submit(tracka + "-" + LieWei);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (null != result && result.code == 200) {
+                            SearchInfoEntity info = result.data;
+                            ddkLendNum.setText(info.getBeltInNumber() + "");
+                            ddkReturnNum.setText(info.getCardInNumber() + "");
+                            aqdLendNum.setText(info.getBeltOutNumber() + "");
+                            aqdReturnNum.setText(info.getCardOutNumber() + "");
+                        } else {
+                            L.i("lz", "请求失败！。。。。。。。。。");
+                        }
+                    }
+                });
+            }
+        }).start();
+    }
+
+    @Override
+    public void onClick(View view) {
+        try {
+            if (view == searchBtn) {
+                if (!StringUtils.isEmpty(trackasSp.getSelectedItem().toString())) {
+                    submit(trackasSp.getSelectedItem().toString());
+                } else {
+                    Toast.makeText(getActivity(), "股道不能为空！", Toast.LENGTH_SHORT).show();
+                }
+            } else if (view == mloan_txt) {
+                Intent in = new Intent(getActivity(), Loan_Activty.class);
+                startActivity(in);
+
+            } else if (view == mreturn_txt) {
+                Intent in = new Intent(getActivity(), Loan_Activty.class);
+                startActivity(in);
+            }
+        } catch (Exception e) {
+            return;
+        }
+    }
+}

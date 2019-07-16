@@ -1,0 +1,478 @@
+package com.gsoft.keyhandover;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.gsoft.keyhandover.buz.RemouldBuz;
+import com.gsoft.keyhandover.entity.AtitleEntity2;
+import com.gsoft.keyhandover.entity.QtitleEntity2;
+import com.gsoft.keyhandover.entity.ServerResponse;
+import com.gsoft.keyhandover.util.L;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+/**
+ * Created by Administrator on 2018/1/23.
+ */
+
+public class RemouldImplement_StartJob_Activty extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener {
+    /**
+     * 回填
+     */
+    Context context;
+    ListView listV;
+    LinearLayout isZhijian, isShishi;
+    Button downfileBtn, fillallBtn;
+    Button mAllHuiTian_btn;
+    TextView mtextview_title;
+    MyAdapter adapter;//质检
+    MyAdapter2 adapter2;//实施
+    List<AtitleEntity2> lists = new ArrayList<>();
+    List<QtitleEntity2> qlists = new ArrayList<>();
+
+    /*传入参数*/
+    String trainCode;
+    String trainName;
+    String operationId;
+    String trainOrder;
+    String detailId;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.remouldimplement_startjob);
+        context = this;
+        getIntentData();
+        initView();
+    }
+
+    private void getIntentData() {
+        Intent intent = getIntent();
+        if (null != intent) {
+            trainCode = intent.getStringExtra("trainCode");
+            trainName = intent.getStringExtra("trainName");
+            operationId = intent.getStringExtra("operationId");
+            trainOrder = intent.getStringExtra("trainOrder");
+            detailId = intent.getStringExtra("detailId");
+        }
+    }
+
+    private void initView() {
+        mAllHuiTian_btn = findViewById(R.id.AllHuiTian_btn);
+        mAllHuiTian_btn.setOnClickListener(this);
+        mtextview_title = findViewById(R.id.textview_title);
+        listV = findViewById(R.id.listv);
+        isZhijian = findViewById(R.id.is_zhijian);
+        isShishi = findViewById(R.id.is_shishi);
+        downfileBtn = findViewById(R.id.downfile_btn);
+        fillallBtn = findViewById(R.id.fillall_btn);
+        if (BaseApplication.instance().isZJ) {
+            mtextview_title.setText("改造质检");
+            mAllHuiTian_btn.setText("全部质检");
+            isZhijian.setVisibility(View.VISIBLE);
+            isShishi.setVisibility(View.GONE);
+            downfileBtn.setVisibility(View.GONE);
+            adapter = new MyAdapter();
+            listV.setAdapter(adapter);
+        } else {
+            mtextview_title.setText("改造实施");
+            mAllHuiTian_btn.setText("全部回填");
+            isZhijian.setVisibility(View.GONE);
+            isShishi.setVisibility(View.VISIBLE);
+            downfileBtn.setVisibility(View.GONE);
+            adapter2 = new MyAdapter2();
+            listV.setAdapter(adapter2);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getDatas();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.AllHuiTian_btn:
+                new AlertDialog.Builder(RemouldImplement_StartJob_Activty.this)
+                        .setTitle(R.string.DoneAlertDialog)
+                        .setMessage(R.string.Is)
+                        .setPositiveButton(R.string.Done_ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        //质检
+                                        try {
+                                            if (BaseApplication.instance().isZJ) {
+                                                final ServerResponse response = RemouldBuz.OneStepBackFill(detailId, true, "",
+                                                        BaseApplication.instance().user.getRoleCode(),
+                                                        BaseApplication.instance().user.getDeptCode(),
+                                                        BaseApplication.instance().user.getStuffName(),
+                                                        "2");
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        //  L.i("sanmu", "response.code:" + response.code);
+                                                        try {
+                                                            if (response.code == 200 || response.code == 500) {
+                                                                getDatas();
+                                                            } else {
+                                                                Toast.makeText(RemouldImplement_StartJob_Activty.this, response.msg, Toast.LENGTH_SHORT).show();
+                                                            }
+                                                            Toast.makeText(RemouldImplement_StartJob_Activty.this, response.msg.toString(), Toast.LENGTH_SHORT).show();
+                                                        } catch (Exception e) {
+
+                                                        }
+                                                    }
+                                                });
+
+                                            } else {
+                                                //实施
+                                                final ServerResponse response = RemouldBuz.AllbackFill(detailId, "",
+                                                        BaseApplication.instance().user.getRoleCode(),
+                                                        BaseApplication.instance().user.getDeptCode(),
+                                                        BaseApplication.instance().user.getStuffName(),
+                                                        "1");
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        try {
+                                                            if (response.code == 200 || response.code == 500) {
+                                                                getDatas();
+                                                            } else {
+                                                                Toast.makeText(RemouldImplement_StartJob_Activty.this, response.msg.toString(), Toast.LENGTH_SHORT).show();
+                                                            }
+                                                            //Toast.makeText(BackFillActivity.this, response.msg.toString(), Toast.LENGTH_SHORT).show();
+                                                        } catch (Exception e) {
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        } catch (Exception e) {
+                                            return;
+                                        }
+                                    }
+
+
+                                }).start();
+
+                            }
+                        })
+                        .setNegativeButton(R.string.Cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                            }
+                        }).create().show();
+
+
+                break;
+        }
+    }
+
+    boolean isAdopt() {
+        for (AtitleEntity2 entity : lists) {
+            if (false) {  //TODO
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //质检
+    private class MyAdapter extends BaseAdapter {
+        @Override
+        public int getCount() {
+            if (!BaseApplication.instance().isZJ) {
+                return lists.size();
+            } else {
+                return qlists.size();
+            }
+        }
+
+        @Override
+        public Object getItem(int i) {
+            if (!BaseApplication.instance().isZJ) {
+                return lists.get(i);
+            } else {
+                return qlists.get(i);
+            }
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(final int i, View view, ViewGroup viewGroup) {
+            ViewHolder holder = null;
+            if (view == null) {
+                view = LayoutInflater.from(context).inflate(R.layout.item_remouldtitle, null);
+                holder = new ViewHolder();
+                holder.text1 = view.findViewById(R.id.tiem_txt1);
+                holder.text2 = view.findViewById(R.id.tiem_txt2);
+                holder.text3 = view.findViewById(R.id.tiem_txt3);
+                holder.text4 = view.findViewById(R.id.tiem_txt4);
+                holder.fillBtn = view.findViewById(R.id.item_btn);
+                view.setTag(holder);
+            } else {
+                holder = (ViewHolder) view.getTag();
+            }
+            //TODo  赋值
+            Log.e("-LZ-", "--1--" + qlists.size());
+            holder.text1.setText(qlists.get(i).getNodeName());
+            holder.text2.setText(qlists.get(i).getRiskTip());
+            holder.text3.setText(qlists.get(i).getPerformCondition());
+            if (qlists.get(i).getStatus() == 0) {
+                holder.text4.setText("待回填");
+            } else if (qlists.get(i).getStatus() == 1) {
+                holder.text4.setText("回填待质检");
+            } else if (qlists.get(i).getStatus() == 2) {
+                holder.text4.setText("质检不合格");
+                holder.fillBtn.setEnabled(false);
+            } else if (qlists.get(i).getStatus() == 3) {
+                holder.text4.setText("完成");
+                holder.fillBtn.setEnabled(false);
+            } else {
+                holder.text4.setText("不合格");
+            }
+            holder.fillBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    QtitleEntity2 entity = qlists.get(i);
+                    Intent intent = new Intent(RemouldImplement_StartJob_Activty.this, BackFillActivity.class);
+                    intent.putExtra("atitle", entity);
+                    String detailNodeId = qlists.get(i).getDetailNodeId().toString();
+                    intent.putExtra("detailNodeId", detailNodeId);
+                    intent.putExtra("trainName", trainName);
+                    intent.putExtra("trainOrder", trainOrder);
+                    startActivity(intent);
+                }
+            });
+//            if (!BaseApplication.instance().isZJ) {
+//
+//            } else {
+//                holder.text1.setText(qlists.get(i).getNodeName());
+//                holder.text2.setText(qlists.get(i).getQcCheck());
+//                holder.text3.setText(qlists.get(i).getPerformCondition());
+//                if (qlists.get(i).getStatus() == 1) {
+//                    holder.fillBtn.setEnabled(false);
+//                }
+//
+//                holder.fillBtn.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        QtitleEntity entity = qlists.get(i);
+//                        Intent intent = new Intent(RemouldImplement_StartJob_Activty.this, BackFillActivity.class);
+//                        intent.putExtra("atitle", entity);
+//                        intent.putExtra("trainName", trainName);
+//                        intent.putExtra("trainOrder", trainOrder);
+//                        startActivity(intent);
+//                    }
+//               });
+//        }
+
+            return view;
+        }
+
+        public class ViewHolder {
+            TextView text1, text2, text3, text4;
+            Button fillBtn;
+        }
+    }
+
+    //实施
+    private class MyAdapter2 extends BaseAdapter {
+        @Override
+        public int getCount() {
+            if (!BaseApplication.instance().isZJ) {
+                return lists.size();
+            } else {
+                return qlists.size();
+            }
+        }
+
+        @Override
+        public Object getItem(int i) {
+            if (!BaseApplication.instance().isZJ) {
+                return lists.get(i);
+            } else {
+                return qlists.get(i);
+            }
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(final int i, View view, ViewGroup viewGroup) {
+            ViewHolder holder = null;
+            if (view == null) {
+                view = LayoutInflater.from(context).inflate(R.layout.item_remouldtitle2, null);
+                holder = new ViewHolder();
+                holder.text1 = view.findViewById(R.id.tiem_txt1);
+                holder.text2 = view.findViewById(R.id.tiem_txt2);
+                holder.text3 = view.findViewById(R.id.tiem_txt3);
+                holder.text4 = view.findViewById(R.id.tiem_txt4);
+                holder.text5 = view.findViewById(R.id.tiem_txt5);
+                holder.fillBtn = view.findViewById(R.id.item_btn);
+                view.setTag(holder);
+            } else {
+                holder = (ViewHolder) view.getTag();
+            }
+            //TODo  赋值
+//            if (!BaseApplication.instance().isZJ) {
+//                holder.text1.setText(lists.get(i).getNodeName());
+//                holder.text2.setText(lists.get(i).getRiskTip());
+//                holder.text3.setText(lists.get(i).getPerformCondition());
+//                holder.text4.setText(lists.get(i).getQcStatus());
+//                holder.text5.setText(lists.get(i).getQpStatus());
+//                if (lists.get(i).getQpStatus()==1) {
+//                    holder.fillBtn.setEnabled(false);
+//                } else {
+//
+//                }
+//
+//                holder.fillBtn.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        AtitleEntity1 entity = lists.get(i);
+//                        Intent intent = new Intent(RemouldImplement_StartJob_Activty.this, BackFillActivity.class);
+//                        intent.putExtra("atitle", entity);
+//                        intent.putExtra("trainName", trainName);
+//                        intent.putExtra("trainOrder", trainOrder);
+//                        startActivity(intent);
+//                    }
+//                });
+//            } else {
+//
+//            }
+            holder.text1.setText(lists.get(i).getNodeName());
+            holder.text2.setText(lists.get(i).getRiskTip());
+            holder.text3.setText(lists.get(i).getPerformCondition());
+            if (lists.get(i).getStatus() == 0) {
+                holder.text4.setText("待回填");
+            } else if (lists.get(i).getStatus() == 1) {
+                holder.text4.setText("回填待质检");
+                holder.fillBtn.setEnabled(false);
+            } else if (lists.get(i).getStatus() == 2) {
+                holder.text4.setText("质检不合格");
+            } else if (lists.get(i).getStatus() == 3) {
+                holder.text4.setText("完成");
+                holder.fillBtn.setEnabled(false);
+            } else {
+            }
+            holder.fillBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AtitleEntity2 entity = lists.get(i);
+                    Intent intent = new Intent(RemouldImplement_StartJob_Activty.this, BackFillActivity.class);
+                    intent.putExtra("atitle", entity);
+                    String detailNodeId = lists.get(i).getDetailNodeId().toString();
+                    intent.putExtra("detailNodeId", detailNodeId);
+                    intent.putExtra("trainOrder", trainOrder);
+                    intent.putExtra("trainName", trainName);
+                    startActivity(intent);
+                }
+            });
+            return view;
+
+        }
+
+        public class ViewHolder {
+            TextView text1, text2, text3, text4, text5;
+            Button fillBtn;
+        }
+    }
+
+    //数据请求
+    private void getDatas() {
+        try {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (!BaseApplication.instance().isZJ) {
+                        //实施
+                        final RemouldBuz.AtitlesResult result = RemouldBuz.getAtitles(detailId,
+                                BaseApplication.instance().user.getRoleCode(),
+                                BaseApplication.instance().user.getDeptCode(),
+                                BaseApplication.instance().user.getStuffName(),
+                                "1");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                lists.clear();
+                                if (null != result && null != result.data) {
+                                    lists.addAll(result.data);
+                                    adapter2.notifyDataSetChanged();
+                                } else
+                                    Toast.makeText(RemouldImplement_StartJob_Activty.this, "获取数据失败！", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+                        //质检
+                        Log.e("----", detailId);
+                        final RemouldBuz.QtitlesResult result = RemouldBuz.getQtitles(detailId,
+                                BaseApplication.instance().user.getRoleCode(),
+                                BaseApplication.instance().user.getDeptCode(),
+                                BaseApplication.instance().user.getStuffName(),
+                                "2");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                qlists.clear();
+                                if (null != result && null != result.data) {
+                                    qlists.addAll(result.data);
+                                    adapter.notifyDataSetChanged();
+                                } else
+                                    Toast.makeText(RemouldImplement_StartJob_Activty.this, "获取数据失败！", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+            }).start();
+        } catch (Exception e) {
+            e.getMessage();
+            return;
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Intent back = new Intent();
+        if (BaseApplication.instance().isZJ) {
+            back.setClass(RemouldImplement_StartJob_Activty.this, RemouldQualityActivty.class);
+        } else {
+            back.setClass(RemouldImplement_StartJob_Activty.this, RemouldImplement_Activty.class);
+        }
+        startActivity(back);
+        finish();
+        return super.onKeyDown(keyCode, event);
+    }
+}

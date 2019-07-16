@@ -1,0 +1,143 @@
+package com.gsoft.keyhandover;
+
+import android.content.Context;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.TextView;
+
+import com.gsoft.keyhandover.buz.RemouldBuz;
+import com.gsoft.keyhandover.entity.SequenceOrState;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Created by Administrator on 2018/1/20.
+ */
+
+public class RemouldImplement_Adapter extends BaseAdapter implements View.OnClickListener, ListAdapter {
+    int color = 0;
+    List<Map<String, Object>> sequenceOrState_data_list;
+    //    ArrayList<Map<String, Object>> sequenceOrState_data_list;
+//    private List<RemouldBuz.SequenceOrStateResult> sequenceOrState_data_list;
+//     private List<SequenceOrState> sequenceOrState_data_list;
+    Context context;
+    private LayoutInflater layoutInflater;
+
+    public RemouldImplement_Adapter(Context context, List<Map<String, Object>> sequenceOrState_data_list) {
+        this.sequenceOrState_data_list = sequenceOrState_data_list;
+        this.layoutInflater = LayoutInflater.from(context);
+    }
+
+    @Override
+    public int getCount() {
+        return sequenceOrState_data_list.size();
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return sequenceOrState_data_list.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        final MyViewHolder vh;
+        if (convertView == null) {
+            convertView = layoutInflater.inflate(R.layout.remouldimplemen_item, null);
+//            convertView = LayoutInflater.from(context).inflate(R.layout.remouldimplemen_item, null);
+            vh = new MyViewHolder();
+//            vh.selectorImg = convertView.findViewById(R.id.checkbox);
+//            vh.hide_1 = convertView.findViewById(R.id.hide_1);
+//            vh.ll_hide = convertView.findViewById(R.id.ll_hide);
+//            vh.A_CheZuHao = convertView.findViewById(R.id.CheZuHao);
+            vh.A_LiangXu = convertView.findViewById(R.id.LiangXu);
+//            vh.A_ZuoYecontent = convertView.findViewById(R.id.ZuoYecontent);
+            vh.A_state_txt = convertView.findViewById(R.id.state_txt);
+            convertView.setTag(vh);
+        } else {
+            vh = (MyViewHolder) convertView.getTag();
+        }
+//        if (null != vh.hide_1) {
+//            vh.hide_1.setText((String) sequenceOrState_data_list.get(position).);
+//        }
+        //  vh.A_CheZuHao.setText((String) ZuoYe_list.get(position).get("text1"));
+        vh.A_LiangXu.setText(sequenceOrState_data_list.get(position).get("oder") + "");
+//        vh.A_LiangXu.setText(sequenceOrState_data_list.get(position).getTrainOrder());
+        if (sequenceOrState_data_list.get(position).get("statu").equals("1")) {
+            vh.A_state_txt.setText("完成");
+        } else {
+            vh.A_state_txt.setText("未完成");
+        }
+
+
+//        // vh.A_ZuoYecontent.setText((String) ZuoYe_list.get(position).get("text3"));
+//        vh.A_state_txt.setText((String) ZuoYe_list.get(position).get("text2"));
+        // vh.selectorImg.setBackgroundResource(R.drawable.look_img);
+
+
+//        //刷新adapter的时候，getview重新执行，此时对在点击中标记的position做处理
+//        if (clickPosition == position) {//当条目为刚才点击的条目时
+//            if (vh.selectorImg.isSelected()) {//当条目状态图标为选中时，说明该条目处于展开状态，此时让它隐藏，并切换状态图标的状态。
+//                vh.selectorImg.setSelected(false);
+//                vh.ll_hide.setVisibility(View.GONE);
+//                clickPosition = -1;
+//            } else {//当状态条目处于未选中时，说明条目处于未展开状态，此时让他展开。同时切换状态图标的状态。
+//                vh.selectorImg.setSelected(true);
+//                vh.ll_hide.setVisibility(View.VISIBLE);
+//            }
+//        } else {
+//            vh.ll_hide.setVisibility(View.GONE);
+//            vh.selectorImg.setSelected(false);
+//        }
+//        vh.hide_1.setOnClickListener(this);
+//        vh.selectorImg.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                clickPosition = position;//记录点击的position
+//                if (color == 0) {
+//                    vh.selectorImg.setBackgroundResource(R.drawable.cliklook_img);
+//                    color = 1;
+//                } else if (color == 1) {
+//                    vh.selectorImg.setBackgroundResource(R.drawable.look_img);
+//                    color = 0;
+//                }
+//                notifyDataSetChanged();
+//            }
+//        });
+        return convertView;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.hide_1:
+                break;
+
+        }
+    }
+
+
+    class MyViewHolder {
+        View itemView;
+        TextView hide_1;
+        TextView selectorImg;
+        LinearLayout ll_hide;
+        public TextView A_CheZuHao;
+        public TextView A_LiangXu;
+        public TextView A_ZuoYecontent;
+        public TextView A_state_txt;
+
+    }
+}

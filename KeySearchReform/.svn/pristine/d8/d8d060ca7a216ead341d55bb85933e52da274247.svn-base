@@ -1,0 +1,291 @@
+package com.gsoft.keyhandover;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.gsoft.keyhandover.buz.RemouldBuz;
+import com.gsoft.keyhandover.entity.AtitleEntity1;
+import com.gsoft.keyhandover.entity.ProjectEntity;
+import com.gsoft.keyhandover.entity.SequenceOrState;
+import com.gsoft.keyhandover.entity.TrainEntity;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+public class RemouldImplement_Activty extends Activity implements View.OnClickListener {
+    /*
+ * 改造实施作业数据
+ */
+    private Spinner mGaoZaoShiShi_CheZu_sp;
+    private Spinner mGaoZaoShiShi_XiangMu_sp;
+    private ImageView mChaXun_img;
+    private TextView mbutton_back;
+
+    private Button mTarins_search_btn;
+    private ListView mListView;
+    private RelativeLayout selectDate, selectTime;
+    private TextView currentDate, currentTime;
+    private CustomDatePicker customDatePicker1, customDatePicker2;
+    private TextView mtextview_title;
+    private RemouldImplement_Adapter remouldImplement_adapter;
+
+    //车组号
+    private ArrayAdapter<String> CarNum_Adapter;//车组号适配器
+    private List<String> CarNum_data_list;
+    private String carscode;//车组赋值
+    private String getCarCode;//获取车组
+    private RemouldBuz.TrainsResult carnum_data; //车组号获取
+    //项目
+    private String Project;//项目名称赋值
+    private String getProjectID;//获取项目名称
+    private List<String> Project_data_list = new ArrayList<>();//项目列表
+    private ArrayAdapter<String> Project_adapter;//项目适配器
+    private RemouldBuz.ProjectResult Project_data;//项目名称
+    //查询结果
+    ArrayList<Map<String, Object>> ZuoYe_list = new ArrayList<Map<String, Object>>();//查询结果
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activty_remouldimplemen);
+        InStantiation();
+    }
+
+    //实例化
+    public void InStantiation() {
+        mGaoZaoShiShi_CheZu_sp = findViewById(R.id.GaoZaoShiShi_CheZu_sp);
+        mGaoZaoShiShi_XiangMu_sp = findViewById(R.id.GaoZaoShiShi_XiangMu_sp);
+        mbutton_back = findViewById(R.id.button_back);
+        selectTime = findViewById(R.id.selectTime);
+        selectTime.setOnClickListener(this);
+        selectDate = findViewById(R.id.selectDate);
+        selectDate.setOnClickListener(this);
+        currentDate = findViewById(R.id.currentDate);
+        currentTime = findViewById(R.id.currentTime);
+        mListView = findViewById(R.id.RemouldImplement_list);
+        mChaXun_img = findViewById(R.id.ChaXun_img);
+        mChaXun_img.setOnClickListener(this);
+        mtextview_title = findViewById(R.id.textview_title);
+        mtextview_title.setText("改造实施");
+
+        mTarins_search_btn = findViewById(R.id.Tarins_search_btn);
+        mTarins_search_btn.setOnClickListener(this);
+
+        remouldImplement_adapter = new RemouldImplement_Adapter(RemouldImplement_Activty.this, ZuoYe_list);
+        mListView.setAdapter(remouldImplement_adapter);
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent startjob = new Intent(RemouldImplement_Activty.this, RemouldImplement_StartJob_Activty.class);
+                startjob.putExtra("trainOrder", ZuoYe_list.get(i).get("oder").toString());
+                startjob.putExtra("trainCode", getCarCode);
+                startjob.putExtra("trainName", carscode);
+                startjob.putExtra("operationId", getProjectID);
+                startActivity(startjob);
+            }
+        });
+        initDatePicker();//时间选择
+        TrainsNum();//车组号
+    }
+
+    //时间选择
+    private void initDatePicker() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
+        String now = sdf.format(new Date());
+        currentDate.setText(now.split(" ")[0]);
+        currentTime.setText(now);
+
+        customDatePicker1 = new CustomDatePicker(this, new CustomDatePicker.ResultHandler() {
+            @Override
+            public void handle(String time) { // 回调接口，获得选中的时间
+                currentDate.setText(time.split(" ")[0]);
+                TrainsNum();
+            }
+        }, "2010-01-01 00:00", now); // 初始化日期格式请用：yyyy-MM-dd HH:mm，否则不能正常运行
+        customDatePicker1.showSpecificTime(false); // 不显示时和分
+        customDatePicker1.setIsLoop(false); // 不允许循环滚动
+
+        customDatePicker2 = new CustomDatePicker(this, new CustomDatePicker.ResultHandler() {
+            @Override
+            public void handle(String time) { // 回调接口，获得选中的时间
+                currentTime.setText(time);
+                TrainsNum();//还未传时间
+            }
+        }, "2010-01-01 00:00", now);
+        customDatePicker2.showSpecificTime(true); // 显示时和分
+        customDatePicker2.setIsLoop(true); // 允许循环滚动
+    }
+
+    //车组号适配器初始化
+    public void TrainsNum() {
+        CarNum_data_list = new ArrayList<String>();//车组号列表
+        CarNum_data_list.clear();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //车组号数据请求
+                try {
+                    carnum_data = RemouldBuz.getTracks("");
+                    if (carnum_data.data.size() > 0) {
+                        for (TrainEntity data : carnum_data.data) {
+                            CarNum_data_list.add(data.getTrainName());
+                        }
+                    } else {
+                    }
+                } catch (Exception e) {
+                    return;
+                }
+
+            }
+        }).start();
+        CarNum_data_list.add("无");
+        //下拉车组号适配器
+        CarNum_Adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, CarNum_data_list);
+        CarNum_Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mGaoZaoShiShi_CheZu_sp.setAdapter(CarNum_Adapter);
+//        mGaoZaoShiShi_CheZu_sp.setSelection(1, true);
+        mGaoZaoShiShi_CheZu_sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                try {
+                    carscode = mGaoZaoShiShi_CheZu_sp.getSelectedItem().toString();
+                    if (carnum_data.data.size() > 0) {
+                        for (TrainEntity data : carnum_data.data) {
+                            if (data.getTrainName().equals(carscode)) {
+                                getCarCode = data.getTrainCode();
+                                break;
+                            }
+                        }
+
+                    }
+                    Log.e("lz", "code" + getCarCode);
+                    ProJectName(getCarCode);
+                } catch (Exception e) {
+                    return;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+
+
+        });
+
+    }
+
+    //项目适配器初始化
+    public void ProJectName(final String TrainCode) {
+        Project_data_list.clear();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Project_data = RemouldBuz.getProject(TrainCode);
+                for (ProjectEntity data : Project_data.data) {
+                    Project_data_list.add(data.getProjectName());
+                }
+            }
+        }).start();
+        //下拉项目适配器
+        Project_data_list.add("无");
+        Project_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Project_data_list);
+        Project_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mGaoZaoShiShi_XiangMu_sp.setAdapter(Project_adapter);
+        mGaoZaoShiShi_XiangMu_sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                try {
+                    Project = mGaoZaoShiShi_XiangMu_sp.getSelectedItem().toString();
+                    if (carnum_data.data.size() > 0) {
+                        for (ProjectEntity data : Project_data.data) {
+                            if (data.getProjectName().equals(Project)) {
+                                getProjectID = data.getOperationId().toString();
+                                break;
+                            }
+                        }
+
+
+                    }
+                } catch (Exception e) {
+                    return;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.selectDate:
+                customDatePicker1.show(currentDate.getText().toString());
+                break;
+            case R.id.selectTime:
+                customDatePicker2.show(currentTime.getText().toString());
+                break;
+            case R.id.Tarins_search_btn:
+                TrainsNum();
+                break;
+            case R.id.ChaXun_img:
+                try {
+                    if (getProjectID.isEmpty()) {
+                        Toast.makeText(RemouldImplement_Activty.this, "有选项未选择！", Toast.LENGTH_SHORT).show();
+                    } else {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                final RemouldBuz.SequenceOrStateResult sequenceOrState_data = RemouldBuz.getSequenceOrState(getProjectID, getCarCode);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ZuoYe_list.clear();
+                                        if (sequenceOrState_data.data.size() > 0) {
+                                            for (SequenceOrState data : sequenceOrState_data.data) {
+                                                Map<String, Object> map = new HashMap<String, Object>();
+                                                map.put("oder", data.getTrainOrder());
+                                                map.put("statu", data.getStatus());
+                                                ZuoYe_list.add(map);
+                                                remouldImplement_adapter.notifyDataSetChanged();
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        }).start();
+                    }
+                } catch (Exception e) {
+                    return;
+                }
+                break;
+        }
+    }
+
+}

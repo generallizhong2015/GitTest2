@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">检修管理</string>
+    <string name="startjob">一键回填</string>
+    <string name="fujianxiazai">附件下载</string>
+    <string name="time">时间</string>
+    <string name="cars">选择车组</string>
+    <string name="project">选择项目</string>
+    <string name="carsnum">车组号</string>
+    <string name="liangxu">辆序</string>
+    <string name="jobcontent">作业内容</string>
+    <string name="jobsate">任务状态</string>
+
+    <string name="cancle">取消</string>
+    <string name="title">请选择时间</string>
+    <string name="commit">确定</string>
+    <string name="attachment_download">附件下载</string>
+    <string name="year">年</string>
+    <string name="month">月</string>
+    <string name="day">日</string>
+    <string name="hour">时</string>
+    <string name="minute">分</string>
+
+    <string name="select_date">选择时间</string>
+    <string name="current_date">选择时间</string>
+    <string name="select_time">选择时间</string>
+    <string name="current_time">当前时间</string>
+
+    <string name="huitian">回填</string>
+    <string name="chezuhao">车组号：</string>
+    <string name="liangxu1">辆序：</string>
+    <string name="zuoyecontent">作业内容：</string>
+    <string name="zuoyexiangdian">作业项点：</string>
+    <string name="wanchengqingkuang">完成情况：</string>
+    <string name="weijian">未检</string>
+    <string name="hege">合格</string>
+    <string name="buhege">不合格</string>
+    <string name="wancheng">完成</string>
+    <string name="weiwancheng">未完成</string>
+    <string name="beizhu">备注：</string>
+    <string name="tijiao">提交</string>
+    <string name="gaizaoxaingdian">改造项点</string>
+    <string name="yanshoubiaozhun">验收标准</string>
+    <string name="zuoyetiaojian">作业条件</string>
+    <string name="zhiliangguanli">质量管理</string>
+    <string name="fenxiantishi">风险提示</string>
+    <string name="zhijianzhuangtai">任务状态</string>
+</resources>

@@ -1,0 +1,171 @@
+package com.gsoft.keyhandover.entity;
+
+import java.util.List;
+
+/**
+ * Created by Administrator on 2018/1/19.
+ */
+
+public class TrackAsEntity {
+
+
+    /**
+     * TrainInTrackList : [{"TrackCode":"0000000003","TrackName":"DJ1","TrackPla":"1","TrainsetName":"CRH380A-2831","Marshal":8,"IsJoin":false,"JoinTrainsetName":null,"FirCarDir":"01","TrainIn":"0G307CD","TimeTrainIn":"2018-01-11 21:53:50","TrainOut":"","TimeTrainOut":"0001-01-01 00:00:00"},{"TrackCode":"0000000003","TrackName":"DJ1","TrackPla":"2","TrainsetName":"CRH2A-2385","Marshal":8,"IsJoin":false,"JoinTrainsetName":null,"FirCarDir":"01","TrainIn":"","TimeTrainIn":"2018-01-11 21:53:32","TrainOut":"","TimeTrainOut":"0001-01-01 00:00:00"},{"TrackCode":"0000000004","TrackName":"DJ2","TrackPla":"1","TrainsetName":"CRH380D-1560","Marshal":8,"IsJoin":false,"JoinTrainsetName":null,"FirCarDir":"00","TrainIn":"","TimeTrainIn":"2018-01-18 16:28:06","TrainOut":"","TimeTrainOut":"0001-01-01 00:00:00"},{"TrackCode":"0000000004","TrackName":"DJ2","TrackPla":"2","TrainsetName":"CRH1A-1028","Marshal":8,"IsJoin":false,"JoinTrainsetName":null,"FirCarDir":"01","TrainIn":"0C6168","TimeTrainIn":"2018-01-11 21:53:17","TrainOut":"","TimeTrainOut":"0001-01-01 00:00:00"},{"TrackCode":"0000000005","TrackName":"DJ3","TrackPla":"1","TrainsetName":"CRH2A-4006","Marshal":8,"IsJoin":false,"JoinTrainsetName":null,"FirCarDir":"01","TrainIn":"0D2373CD","TimeTrainIn":"2018-01-11 21:53:08","TrainOut":"","TimeTrainOut":"0001-01-01 00:00:00"},{"TrackCode":"0000000005","TrackName":"DJ3","TrackPla":"2","TrainsetName":"CRH2A-2490","Marshal":8,"IsJoin":false,"JoinTrainsetName":null,"FirCarDir":"01","TrainIn":"0D2373CD","TimeTrainIn":"2018-01-11 21:53:02","TrainOut":"","TimeTrainOut":"0001-01-01 00:00:00"},{"TrackCode":"0000000062","TrackName":"DJ5","TrackPla":"1","TrainsetName":"CRH2A-4025","Marshal":8,"IsJoin":false,"JoinTrainsetName":null,"FirCarDir":"01","TrainIn":"0D5159","TimeTrainIn":"2018-01-11 21:55:11","TrainOut":"","TimeTrainOut":"0001-01-01 00:00:00"},{"TrackCode":"0000000062","TrackName":"DJ5","TrackPla":"2","TrainsetName":"CRH2A-2480","Marshal":8,"IsJoin":false,"JoinTrainsetName":null,"FirCarDir":"01","TrainIn":"0D5159","TimeTrainIn":"2018-01-11 21:55:21","TrainOut":"","TimeTrainOut":"0001-01-01 00:00:00"},{"TrackCode":"0000000063","TrackName":"DJ6","TrackPla":"1","TrainsetName":"CRH2A-2273","Marshal":8,"IsJoin":false,"JoinTrainsetName":null,"FirCarDir":"01","TrainIn":"0D353","TimeTrainIn":"2018-01-11 21:54:30","TrainOut":"","TimeTrainOut":"0001-01-01 00:00:00"},{"TrackCode":"0000000063","TrackName":"DJ6","TrackPla":"2","TrainsetName":"CRH1A-1029","Marshal":8,"IsJoin":false,"JoinTrainsetName":null,"FirCarDir":"01","TrainIn":"","TimeTrainIn":"2018-01-11 10:50:22","TrainOut":"","TimeTrainOut":"0001-01-01 00:00:00"},{"TrackCode":"0000000064","TrackName":"DJ7","TrackPla":"1","TrainsetName":"CRH380D-1584","Marshal":8,"IsJoin":false,"JoinTrainsetName":null,"FirCarDir":"01","TrainIn":"0C6221","TimeTrainIn":"2018-01-12 00:28:43","TrainOut":"","TimeTrainOut":"0001-01-01 00:00:00"},{"TrackCode":"0000000064","TrackName":"DJ7","TrackPla":"2","TrainsetName":"CRH380D-1571","Marshal":8,"IsJoin":false,"JoinTrainsetName":null,"FirCarDir":"01","TrainIn":"0C6221","TimeTrainIn":"2018-01-12 00:28:56","TrainOut":"","TimeTrainOut":"0001-01-01 00:00:00"},{"TrackCode":"0000000065","TrackName":"DJ8","TrackPla":"1","TrainsetName":"CRH380D-1568","Marshal":8,"IsJoin":false,"JoinTrainsetName":null,"FirCarDir":"01","TrainIn":"0G8538","TimeTrainIn":"2018-01-11 21:54:05","TrainOut":"","TimeTrainOut":"0001-01-01 00:00:00"}]
+     * Desc :
+     * Type : 1
+     */
+
+    private String Desc;
+    private int Type;
+    private List<TrainInTrackListBean> TrainInTrackList;
+
+    public String getDesc() {
+        return Desc;
+    }
+
+    public void setDesc(String Desc) {
+        this.Desc = Desc;
+    }
+
+    public int getType() {
+        return Type;
+    }
+
+    public void setType(int Type) {
+        this.Type = Type;
+    }
+
+    public List<TrainInTrackListBean> getTrainInTrackList() {
+        return TrainInTrackList;
+    }
+
+    public void setTrainInTrackList(List<TrainInTrackListBean> TrainInTrackList) {
+        this.TrainInTrackList = TrainInTrackList;
+    }
+
+    public static class TrainInTrackListBean {
+        /**
+         * TrackCode : 0000000003
+         * TrackName : DJ1
+         * TrackPla : 1
+         * TrainsetName : CRH380A-2831
+         * Marshal : 8
+         * IsJoin : false
+         * JoinTrainsetName : null
+         * FirCarDir : 01
+         * TrainIn : 0G307CD
+         * TimeTrainIn : 2018-01-11 21:53:50
+         * TrainOut :
+         * TimeTrainOut : 0001-01-01 00:00:00
+         */
+
+        private String TrackCode;
+        private String TrackName;
+        private String TrackPla;
+        private String TrainsetName;
+        private int Marshal;
+        private boolean IsJoin;
+        private Object JoinTrainsetName;
+        private String FirCarDir;
+        private String TrainIn;
+        private String TimeTrainIn;
+        private String TrainOut;
+        private String TimeTrainOut;
+
+        public String getTrackCode() {
+            return TrackCode;
+        }
+
+        public void setTrackCode(String TrackCode) {
+            this.TrackCode = TrackCode;
+        }
+
+        public String getTrackName() {
+            return TrackName;
+        }
+
+        public void setTrackName(String TrackName) {
+            this.TrackName = TrackName;
+        }
+
+        public String getTrackPla() {
+            return TrackPla;
+        }
+
+        public void setTrackPla(String TrackPla) {
+            this.TrackPla = TrackPla;
+        }
+
+        public String getTrainsetName() {
+            return TrainsetName;
+        }
+
+        public void setTrainsetName(String TrainsetName) {
+            this.TrainsetName = TrainsetName;
+        }
+
+        public int getMarshal() {
+            return Marshal;
+        }
+
+        public void setMarshal(int Marshal) {
+            this.Marshal = Marshal;
+        }
+
+        public boolean isIsJoin() {
+            return IsJoin;
+        }
+
+        public void setIsJoin(boolean IsJoin) {
+            this.IsJoin = IsJoin;
+        }
+
+        public Object getJoinTrainsetName() {
+            return JoinTrainsetName;
+        }
+
+        public void setJoinTrainsetName(Object JoinTrainsetName) {
+            this.JoinTrainsetName = JoinTrainsetName;
+        }
+
+        public String getFirCarDir() {
+            return FirCarDir;
+        }
+
+        public void setFirCarDir(String FirCarDir) {
+            this.FirCarDir = FirCarDir;
+        }
+
+        public String getTrainIn() {
+            return TrainIn;
+        }
+
+        public void setTrainIn(String TrainIn) {
+            this.TrainIn = TrainIn;
+        }
+
+        public String getTimeTrainIn() {
+            return TimeTrainIn;
+        }
+
+        public void setTimeTrainIn(String TimeTrainIn) {
+            this.TimeTrainIn = TimeTrainIn;
+        }
+
+        public String getTrainOut() {
+            return TrainOut;
+        }
+
+        public void setTrainOut(String TrainOut) {
+            this.TrainOut = TrainOut;
+        }
+
+        public String getTimeTrainOut() {
+            return TimeTrainOut;
+        }
+
+        public void setTimeTrainOut(String TimeTrainOut) {
+            this.TimeTrainOut = TimeTrainOut;
+        }
+    }
+}

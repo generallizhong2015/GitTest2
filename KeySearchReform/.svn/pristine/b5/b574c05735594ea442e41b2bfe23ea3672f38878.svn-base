@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SearchBar">
+        <attr name="hint" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="OrdinaryTitleBar">
+        <attr name="ordinarytitle" format="string"/>
+        <attr name="showBackImg" format="boolean"/>
+        <attr name="setintentback" format="boolean"/>
+        <attr name="canclick" format="boolean"/>
+    </declare-styleable>
+
+
+</resources>

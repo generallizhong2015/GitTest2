@@ -1,0 +1,164 @@
+package com.gsoft.keyhandover.entity;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+/**
+ * Created by Administrator on 2018/2/24.
+ */
+
+public class AtitleEntity1 implements Parcelable {
+    /**
+     * qpStatus : 1   作业项点状态  0:未完成 1:完成
+     * qcNodeId : E8216C7321C445E5BE940C8462D19B56  作业项点质检ID
+     * qpNodeId : D47AC9DA4803428B8F92ECF067E985FC  作业项点ID
+     * nodeName : 打开冰箱  作业项点名称
+     * backFill : 1   回填状态 0:未回填  1:合格  2:不合格 3:重填
+     * qcStatus : 1   质检状态 0:待回填  1:待质检  2:合格 3:不合格
+     * qcCheck : 无   验收条件
+     * riskTip : 无  风险提示
+     * order : 0    顺序
+     * performCondition : 冰箱   作业条件
+     */
+
+    private int qpStatus;
+    private String qcNodeId;
+    private String qpNodeId;
+    private String nodeName;
+    private int backFill;
+    private int qcStatus;
+    private String qcCheck;
+    private String riskTip;
+    private int order;
+    private String performCondition;
+
+    public int getQpStatus() {
+        return qpStatus;
+    }
+
+    public void setQpStatus(int qpStatus) {
+        this.qpStatus = qpStatus;
+    }
+
+    public String getQcNodeId() {
+        return qcNodeId;
+    }
+
+    public void setQcNodeId(String qcNodeId) {
+        this.qcNodeId = qcNodeId;
+    }
+
+    public String getQpNodeId() {
+        return qpNodeId;
+    }
+
+    public void setQpNodeId(String qpNodeId) {
+        this.qpNodeId = qpNodeId;
+    }
+
+    public String getNodeName() {
+        return nodeName;
+    }
+
+    public void setNodeName(String nodeName) {
+        this.nodeName = nodeName;
+    }
+
+    public int getBackFill() {
+        return backFill;
+    }
+
+    public void setBackFill(int backFill) {
+        this.backFill = backFill;
+    }
+
+    public int getQcStatus() {
+        return qcStatus;
+    }
+
+    public void setQcStatus(int qcStatus) {
+        this.qcStatus = qcStatus;
+    }
+
+    public String getQcCheck() {
+        return qcCheck;
+    }
+
+    public void setQcCheck(String qcCheck) {
+        this.qcCheck = qcCheck;
+    }
+
+    public String getRiskTip() {
+        return riskTip;
+    }
+
+    public void setRiskTip(String riskTip) {
+        this.riskTip = riskTip;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    public String getPerformCondition() {
+        return performCondition;
+    }
+
+    public void setPerformCondition(String performCondition) {
+        this.performCondition = performCondition;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.qpStatus);
+        dest.writeInt(this.backFill);
+        dest.writeString(this.qcNodeId);
+        dest.writeString(this.qpNodeId);
+        dest.writeInt(this.qcStatus);
+        dest.writeString(this.qcCheck);
+        dest.writeString(this.riskTip);
+        dest.writeString(this.nodeName);
+        dest.writeString(this.riskTip);
+        dest.writeInt(this.order);
+        dest.writeString(this.performCondition);
+    }
+
+    public AtitleEntity1() {
+    }
+
+    protected AtitleEntity1(Parcel in) {
+        this.qpStatus = in.readInt();
+        this.backFill = in.readInt();
+        this.qcNodeId = in.readString();
+        this.qpNodeId = in.readString();
+        this.qcStatus = in.readInt();
+        this.qcCheck = in.readString();
+        this.riskTip = in.readString();
+        this.nodeName = in.readString();
+        this.order = in.readInt();
+
+
+        this.performCondition = in.readString();
+    }
+
+    public static final Parcelable.Creator<AtitleEntity1> CREATOR = new Parcelable.Creator<AtitleEntity1>() {
+        @Override
+        public AtitleEntity1 createFromParcel(Parcel source) {
+            return new AtitleEntity1(source);
+        }
+
+        @Override
+        public AtitleEntity1[] newArray(int size) {
+            return new AtitleEntity1[size];
+        }
+    };
+}

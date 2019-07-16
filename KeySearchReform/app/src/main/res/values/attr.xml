@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SearchBar">
+        <attr name="hint" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="OrdinaryTitleBar">
+        <attr name="ordinarytitle" format="string" />
+        <attr name="showBackImg" format="boolean" />
+        <attr name="setintentback" format="boolean" />
+        <attr name="canclick" format="boolean" />
+    </declare-styleable>
+
+
+    <declare-styleable name="RingProgressBar">
+        <attr name="ringColor" format="color" />
+        <attr name="ringProgressColor" format="color" />
+        <attr name="ringWidth" format="dimension" />
+        <attr name="ringTextColor" format="color" />
+        <attr name="ringTextSize" format="dimension" />
+        <attr name="max" format="integer" />
+        <attr name="textIsShow" format="boolean" />
+        <attr name="style">
+            <enum name="STROKE" value="0" />
+            <enum name="FILL" value="1" />
+        </attr>
+    </declare-styleable>
+
+        <declare-styleable name="SignatureView">
+            <attr name="minWidth" format="dimension" />
+            <attr name="maxWidth" format="dimension" />
+            <attr name="penColor" format="color" />
+            <attr name="velocityFilterWeight" format="float" />
+        </declare-styleable>
+
+    </resources>

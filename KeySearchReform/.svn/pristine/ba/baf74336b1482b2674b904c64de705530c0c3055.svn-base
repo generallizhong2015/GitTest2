@@ -1,0 +1,152 @@
+package com.gsoft.keyhandover;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.gsoft.keyhandover.buz.KeyInfoBuz;
+import com.gsoft.keyhandover.entity.KeyInfoEntity;
+import com.gsoft.keyhandover.entity.ServerResponse;
+import com.gsoft.keyhandover.util.L;
+import com.gsoft.keyhandover.util.StringUtils;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+/**
+ * Created by Administrator on 2018/1/12.
+ */
+
+public class KeyHandoverActivity1 extends Activity implements View.OnClickListener {
+
+
+    TextView keyNameTv, keyNumTv, timeTv;
+    TextView carTypeSp, keyTypeSp, carCodeSp;
+    TextView confirmBtn;
+    TextView userEt;
+    TextView jiaochuUser;
+
+    EditText getInfoEt;
+
+    String keyId = "";
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_keyhandover);
+
+        initView();
+    }
+
+    private void initView() {
+        keyNameTv = findViewById(R.id.KeyName);
+        keyNumTv = findViewById(R.id.KeyShuLiang_Tv);
+        timeTv = findViewById(R.id.JiaoJieTime);
+        userEt = findViewById(R.id.JiaoJieRen_Ext);
+        jiaochuUser = findViewById(R.id.JiaochuRen_Ext);
+        getInfoEt = findViewById(R.id.getinfo_et);
+        carTypeSp = findViewById(R.id.CarType_Sp);
+        keyTypeSp = findViewById(R.id.KeyType_Sp);
+        carCodeSp = findViewById(R.id.CheZuHao_Sp);
+        (confirmBtn = findViewById(R.id.confirm_btn)).setOnClickListener(this);
+        getInfoEt.addTextChangedListener(watcher);
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        timeTv.setText(df.format(new Date()));
+        if(null != BaseApplication.instance().user){
+            userEt.setText(BaseApplication.instance().user.getStuffName());
+        }
+    }
+
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.confirm_btn:
+                submit();
+                break;
+        }
+    }
+
+
+    private MyTextWatcher watcher = new MyTextWatcher() {
+        @Override
+        public void onChanged() {
+            String code = getInfoEt.getText().toString().trim();
+            if (!StringUtils.isEmpty(code)) {
+                getInfoEt.setText("");
+                getKeyInfo(code);
+            }
+        }
+    };
+
+
+    void getKeyInfo(final String s) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final KeyInfoBuz.KeyInfoResult result = KeyInfoBuz.getKeyInfo(s);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (null != result && result.code == 200) {
+                            KeyInfoEntity info = result.data;
+                            keyNameTv.setText(info.getKeyName());
+                            keyNumTv.setText(info.getKeyNumber() + "");
+                            keyId = info.getKeyId();
+                            carTypeSp.setText(info.getTrainType());
+                            keyTypeSp.setText(info.getKeyType());
+                            carCodeSp.setText(info.getEmu());
+                            jiaochuUser.setText(info.getJoinName());
+                        } else {
+                            L.i("sanmu", "请求失败！。。。。。。。。。");
+                        }
+                    }
+                });
+            }
+        }).start();
+
+    }
+
+
+    void submit() {
+        if (StringUtils.isEmpty(userEt)) {
+            Toast.makeText(this, "交接人不能为空！", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (StringUtils.isEmpty(jiaochuUser)) {
+            Toast.makeText(this, "钥匙信息有误！", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (StringUtils.isEmpty(keyId)) {
+            Toast.makeText(this, "请获取钥匙信息！", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final ServerResponse result = KeyInfoBuz.submitInfo(userEt.getText().toString().trim(), keyId,BaseApplication.instance().user.getStuffId());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (null != result && result.code == 200) {
+                            Toast.makeText(KeyHandoverActivity1.this, "提交成功！", Toast.LENGTH_SHORT).show();
+                            KeyHandoverActivity1.this.finish();
+                        } else {
+                            L.i("sanmu", "请求失败！。。。。。。。。。");
+                            Toast.makeText(KeyHandoverActivity1.this, result.msg, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        }).start();
+    }
+
+
+}

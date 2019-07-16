@@ -1,0 +1,127 @@
+package com.gsoft.cddcdjianxiu.business.http;
+
+
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.gsoft.cddcdjianxiu.CalculationCore.type.JobPositionType;
+import com.gsoft.cddcdjianxiu.app.Api;
+import com.gsoft.cddcdjianxiu.utils.SPUtils1;
+
+import org.xutils.http.RequestParams;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeMap;
+
+
+/**
+ * Created by sanmu on 2016/10/12 0012.
+ */
+public class BaseApi {
+    public String url;
+    public RequestParams params;
+    private RequestParams paramsE;
+    public TreeMap<String, Object> map = new TreeMap<String, Object>();
+    public TreeMap<String, Object> bodyParams = new TreeMap<String, Object>();
+    public List<String> jsonKey = new ArrayList<String>();
+    public List<String> fileUrls = new ArrayList<String>();
+    public String fileTitle = "";
+    public boolean hasHttp;
+
+    public int PS;
+    public int PT;
+
+    public BaseApi mapClear() {
+        map.clear();
+        fileUrls.clear();
+        return this;
+    }
+
+    public BaseApi paramClear() {
+        map.clear();
+        fileUrls.clear();
+        bodyParams.clear();
+        return this;
+    }
+
+    public BaseApi(String url) {
+        this.url = url;
+    }
+
+    //添加请求常量
+    private void addConstant() {
+        if (!url.contains("http://")) {
+            url = "http://" + Api.ip + url;
+        }
+//        params.addBodyParameter("appId", Constant.appId);
+//        params.addBodyParameter("appSecret", Constant.appSecret);
+    }
+
+    public BaseApi addPage(int pageSize, int pageNo) {
+        if (pageSize != 0) {
+            PS = pageSize;
+        }
+        if (pageNo != 0) {
+            PT = pageNo;
+        }
+        return this;
+    }
+
+    public BaseApi addMap(String name, Object value) {
+        map.put(name, value);
+        return this;
+    }
+
+    public BaseApi addParams(String name, Object value) {
+        bodyParams.put(name, value);
+        return this;
+    }
+
+    public BaseApi addBody() {
+        params = new RequestParams();
+        addConstant();
+        if (PS != 0) {
+            params.addBodyParameter("pageSize", "" + PS);
+        }
+        if (PT != 0) {
+            params.addBodyParameter("pageNum", "" + PT);
+        }
+
+        for (String key : bodyParams.keySet()) {
+            params.addBodyParameter(key, "" + bodyParams.get(key));
+        }
+
+        return this;
+    }
+
+    public BaseApi addJsonKey(String... key) {
+        for (String str : key) {
+            jsonKey.add(str);
+        }
+        return this;
+    }
+
+    public BaseApi setFileUrls(List<String> fileUrls) {
+        this.fileUrls.addAll(fileUrls);
+        return this;
+    }
+
+    public BaseApi setFileUrl(String fileUrl) {
+        this.fileUrls.add(fileUrl);
+        return this;
+    }
+
+    public BaseApi setFileTitle(String fileTitle) {
+        this.fileTitle = fileTitle;
+        return this;
+    }
+
+    public RequestParams getParamsE() {
+        return paramsE;
+    }
+
+    public void setParamsE(RequestParams paramsE) {
+        this.paramsE = paramsE;
+    }
+}

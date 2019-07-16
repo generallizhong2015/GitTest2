@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 颜色控制 creat by yangzhaolin on 2017-12-13 -->
+    <color name="activity_bg">#ECF5FF</color>
+    <color name="titlebar_bg">#0072E3</color>
+    <color name="titlebar_bg_01">#005AB5</color>
+    <color name="bg_01">#D8DFE8</color>
+    <color name="bg_02">#F3F5F8</color>
+    <color name="bg_03">#999999</color>
+
+
+    <!--蓝色,主要用于控件背景搭配-->
+    <color name="blue_01">#005AB5</color>
+    <color name="blue_02">#0072E3</color>
+    <color name="blue_03">#2894FF</color>
+    <color name="blue_04">#46A3FF</color>
+    <color name="blue_05">#84C1FF</color>
+
+    <!--蓝色,主要用于控件背景搭配-->
+    <color name="bule_01">#005AB5</color>
+    <color name="bule_02">#0072E3</color>
+    <color name="bule_03">#2894FF</color>
+    <color name="bule_04">#46A3FF</color>
+    <color name="bule_05">#84C1FF</color>
+    <color name="bule_06">#436EEE</color>
+    <color name="bule_07">#5CACEE</color>
+    <color name="bule_08">#7EC0EE</color>
+    <color name="bule_09">#87CEFA</color>
+
+
+    <!--灰白色，主要用于模块,线条、深色背景文字等背景搭配-->
+    <color name="gray_01">#FFFFFF</color>
+    <color name="gray_02">#FCFCFC</color>
+    <color name="gray_03">#F0F0F0</color>
+    <color name="gray_04">#E0E0E0</color>
+    <color name="gray_05">#D0D0D0</color>
+
+    <!--灰黑色，主要用于文字颜色控制-->
+    <color name="black_01">#272727</color>
+    <color name="black_02">#3C3C3C</color>
+    <color name="black_03">#4F4F4F</color>
+    <color name="black_04">#5B5B5B</color>
+    <color name="black_05">#6C6C6C</color>
+
+    <!--突出表现色,用于警告提醒-->
+    <color name="red_notice">#FF2D2D</color>
+    <color name="green_remind">#53FF53</color>
+
+    <!--按钮颜色-->
+    <color name="button_brown">#991332</color>
+    <color name="button_orange">#FFA500</color>
+
+</resources>
